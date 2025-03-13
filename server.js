@@ -1,21 +1,15 @@
-// Подключаем dotenv для работы с переменными окружения
-require('dotenv').config();
-
-const express = require('express');
-const mongoose = require('mongoose');
+import express from 'express';
+import mongoose from 'mongoose';
+import config from './config/config.js'; // Импортируем конфигурацию
 
 // Создаем экземпляр приложения Express
 const app = express();
 
-// Получаем переменные окружения
-const MONGODB_URI = process.env.MONGODB_URI;
-const PORT = process.env.PORT || 5001; // Если PORT не указан, используем 5000
+// Получаем переменные из конфигурации
+const { MONGODB_URI, PORT } = config;
 
 // Подключение к MongoDB
-mongoose.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
+mongoose.connect(MONGODB_URI)
     .then(() => {
         console.log('Подключение к MongoDB успешно установлено.');
     })
