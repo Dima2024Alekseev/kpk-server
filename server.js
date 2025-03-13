@@ -1,12 +1,18 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import config from './config/config.js'; // Импортируем конфигурацию
+import cors from 'cors';
+import authRoutes from './routes/authRoutes.js';
+import config from './config/config.js';
 
-// Создаем экземпляр приложения Express
+const { MONGODB_URI, PORT } = config;
+
 const app = express();
 
-// Получаем переменные из конфигурации
-const { MONGODB_URI, PORT } = config;
+// Middleware для обработки JSON
+app.use(express.json());
+
+// Настройка CORS
+app.use(cors());
 
 // Подключение к MongoDB
 mongoose.connect(MONGODB_URI)
@@ -17,10 +23,8 @@ mongoose.connect(MONGODB_URI)
         console.error('Ошибка подключения к MongoDB:', err);
     });
 
-// Простой маршрут для проверки работы сервера
-app.get('/', (req, res) => {
-    res.send('Сервер работает!');
-});
+// Роуты
+app.use('/api/auth', authRoutes);
 
 // Запуск сервера
 app.listen(PORT, () => {
