@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
+import quoteRoutes from './routes/quoteRoutes.js';
 import config from './config/config.js';
 
 const { MONGODB_URI, PORT } = config;
@@ -27,6 +28,7 @@ mongoose.connect(MONGODB_URI)
 // Роуты
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/quotes', quoteRoutes); // Подключаем роуты для цитат
 
 // Запуск сервера
 app.listen(PORT, () => {
