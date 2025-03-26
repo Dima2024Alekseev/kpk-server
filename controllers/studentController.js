@@ -4,7 +4,7 @@ import Direction from "../models/Direction.js";
 
 // Создать нового студента
 export const createStudent = async (req, res) => {
-  const { fullName, group, specialty, studentId } = req.body;
+  const { lastName, firstName, middleName, group, specialty, studentId } = req.body;
 
   try {
     // Проверяем, существует ли группа
@@ -27,7 +27,9 @@ export const createStudent = async (req, res) => {
 
     // Создаем нового студента
     const newStudent = new Student({
-      fullName,
+      lastName,
+      firstName,
+      middleName,
       group,
       specialty,
       studentId,
@@ -48,7 +50,7 @@ export const createStudent = async (req, res) => {
   }
 };
 
-// Получить всех студентов
+// Получить всех студентов (остаётся без изменений)
 export const getStudents = async (req, res) => {
   try {
     const students = await Student.find()
@@ -64,7 +66,7 @@ export const getStudents = async (req, res) => {
 // Обновить студента
 export const updateStudent = async (req, res) => {
   const { id } = req.params;
-  const { fullName, group, specialty, studentId } = req.body;
+  const { lastName, firstName, middleName, group, specialty, studentId } = req.body;
 
   try {
     // Находим студента
@@ -100,10 +102,10 @@ export const updateStudent = async (req, res) => {
       student.studentId = studentId;
     }
 
-    // Обновляем имя, если оно было изменено
-    if (fullName) {
-      student.fullName = fullName;
-    }
+    // Обновляем ФИО, если они были изменены
+    if (lastName) student.lastName = lastName;
+    if (firstName) student.firstName = firstName;
+    if (middleName !== undefined) student.middleName = middleName;
 
     // Сохраняем изменения
     const updatedStudent = await student.save();
@@ -120,7 +122,7 @@ export const updateStudent = async (req, res) => {
   }
 };
 
-// Удалить студента
+// Удалить студента (остаётся без изменений)
 export const deleteStudent = async (req, res) => {
   const { id } = req.params;
 
