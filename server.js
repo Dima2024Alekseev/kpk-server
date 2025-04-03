@@ -4,9 +4,9 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import quoteRoutes from "./routes/quoteRoutes.js";
-import directionRoutes from "./routes/directionRoutes.js"; // Новый роут
-import groupRoutes from "./routes/groupRoutes.js"; // Новый роут
-import studentRoutes from "./routes/studentRoutes.js"; // Новый роут
+import directionRoutes from "./routes/directionRoutes.js";
+import groupRoutes from "./routes/groupRoutes.js";
+import studentRoutes from "./routes/studentRoutes.js";
 import config from "./config/config.js";
 
 const { MONGODB_URI, PORT } = config;
@@ -16,8 +16,12 @@ const app = express();
 // Middleware для обработки JSON
 app.use(express.json());
 
-// Настройка CORS
-app.use(cors());
+// Настройка CORS с разрешением нужных заголовков
+app.use(cors({
+  origin: true,
+  credentials: true,
+  exposedHeaders: ['Authorization'],
+}));
 
 // Подключение к MongoDB
 mongoose
@@ -33,9 +37,9 @@ mongoose
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/quotes", quoteRoutes);
-app.use("/api/directions", directionRoutes); // Подключаем роуты для направлений
-app.use("/api/groups", groupRoutes); // Подключаем роуты для групп
-app.use("/api/students", studentRoutes); // Подключаем роуты для студентов
+app.use("/api/directions", directionRoutes);
+app.use("/api/groups", groupRoutes);
+app.use("/api/students", studentRoutes);
 
 // Запуск сервера
 app.listen(PORT, () => {
