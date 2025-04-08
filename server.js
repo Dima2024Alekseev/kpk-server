@@ -7,6 +7,8 @@ import quoteRoutes from "./routes/quoteRoutes.js";
 import directionRoutes from "./routes/directionRoutes.js";
 import groupRoutes from "./routes/groupRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
+import teacherRoutes from "./routes/teacherRoutes.js"; // Добавляем
+import departmentRoutes from "./routes/departmentRoutes.js"; // Добавляем
 import config from "./config/config.js";
 
 const { MONGODB_URI, PORT } = config;
@@ -40,6 +42,8 @@ app.use("/api/quotes", quoteRoutes);
 app.use("/api/directions", directionRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/students", studentRoutes);
+app.use("/api/teachers", teacherRoutes); // Добавляем
+app.use("/api/departments", departmentRoutes); // Добавляем
 
 // Запуск сервера
 app.listen(PORT, () => {
