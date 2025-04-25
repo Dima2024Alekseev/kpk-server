@@ -12,10 +12,10 @@ export const getEvents = async (req, res) => {
 
 // Создать мероприятие
 export const createEvent = async (req, res) => {
-    const { title, date, time, place, organizer, image, students, teachers } = req.body;
+    const { title, date, time, place, organizer, image, city, responsiblePerson, contactPerson, students, teachers } = req.body;
 
     try {
-        const newEvent = new Event({ title, date, time, place, organizer, image, students, teachers });
+        const newEvent = new Event({ title, date, time, place, organizer, image, city, responsiblePerson, contactPerson, students, teachers });
         await newEvent.save();
         res.status(201).json(newEvent);
     } catch (error) {
@@ -26,12 +26,12 @@ export const createEvent = async (req, res) => {
 // Обновить мероприятие
 export const updateEvent = async (req, res) => {
     const { id } = req.params;
-    const { title, date, time, place, organizer, image, students, teachers } = req.body;
+    const { title, date, time, place, organizer, image, city, responsiblePerson, contactPerson, students, teachers } = req.body;
 
     try {
         const updatedEvent = await Event.findByIdAndUpdate(
             id,
-            { title, date, time, place, organizer, image, students, teachers },
+            { title, date, time, place, organizer, image, city, responsiblePerson, contactPerson, students, teachers },
             { new: true }
         ).populate('students teachers');
         res.status(200).json(updatedEvent);

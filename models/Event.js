@@ -6,7 +6,10 @@ const eventSchema = new mongoose.Schema({
     time: { type: String, required: true },
     place: { type: String, required: true },
     organizer: { type: String, required: true },
-    image: { type: String, required: true }, // URL изображения
+    image: { type: String, required: true }, 
+    city: { type: String, required: true },
+    responsiblePerson: { type: String, required: true },
+    contactPerson: { type: String, required: true }, 
     students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
     teachers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Teacher' }],
 });
