@@ -4,7 +4,9 @@ import jwt from 'jsonwebtoken';
 import logger from '../logger.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const REFRESH_SECRET = process.env.REFRESH_SECRET || 'your-refresh-secret-key';
 const EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
+const REFRESH_EXPIRES_IN = process.env.REFRESH_EXPIRES_IN || '7d';
 
 export const register = async (req, res) => {
     const { username, password, role = 'user' } = req.body;
@@ -20,13 +22,20 @@ export const register = async (req, res) => {
         const user = new User({ username, password: hashedPassword, role });
         await user.save();
 
-        const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+        const accessToken = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
             expiresIn: EXPIRES_IN,
         });
 
+        const refreshToken = jwt.sign({ id: user._id, role: user.role }, REFRESH_SECRET, {
+            expiresIn: REFRESH_EXPIRES_IN,
+        });
+
+        user.refreshToken = refreshToken;
+        await user.save();
+
         logger.info(`Пользователь ${username} успешно зарегистрирован`);
         res.status(201).json({
-            token,
+            accessToken,
             user: {
                 id: user._id,
                 username: user.username,
@@ -57,13 +66,20 @@ export const login = async (req, res) => {
             return res.status(400).json({ error: 'Неверные учетные данные' });
         }
 
-        const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+        const accessToken = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
             expiresIn: EXPIRES_IN,
         });
 
+        const refreshToken = jwt.sign({ id: user._id, role: user.role }, REFRESH_SECRET, {
+            expiresIn: REFRESH_EXPIRES_IN,
+        });
+
+        user.refreshToken = refreshToken;
+        await user.save();
+
         logger.info(`Пользователь ${username} успешно авторизован`);
         res.status(200).json({
-            token,
+            accessToken,
             user: {
                 id: user._id,
                 username: user.username,
@@ -78,23 +94,23 @@ export const login = async (req, res) => {
 
 export const refreshToken = async (req, res) => {
     try {
-        const token = req.header('Authorization')?.replace('Bearer ', '');
-        if (!token) {
+        const refreshToken = req.header('Authorization')?.replace('Bearer ', '');
+        if (!refreshToken) {
             return res.status(401).json({ error: 'Требуется авторизация' });
         }
 
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
         const user = await User.findById(decoded.id);
 
-        if (!user) {
-            return res.status(404).json({ error: 'Пользователь не найден' });
+        if (!user || user.refreshToken !== refreshToken) {
+            return res.status(401).json({ error: 'Недействительный токен' });
         }
 
-        const newToken = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+        const accessToken = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
             expiresIn: EXPIRES_IN,
         });
 
-        res.status(200).json({ token: newToken });
+        res.status(200).json({ accessToken });
     } catch (error) {
         res.status(401).json({ error: 'Недействительный токен' });
     }

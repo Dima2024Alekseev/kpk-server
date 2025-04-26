@@ -4,15 +4,15 @@ import logger from '../logger.js';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export const authenticate = (req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    const accessToken = req.header('Authorization')?.replace('Bearer ', '');
 
-    if (!token) {
+    if (!accessToken) {
         logger.warn('Попытка доступа без токена');
         return res.status(401).json({ error: 'Требуется авторизация' });
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(accessToken, JWT_SECRET);
         req.user = decoded;
         logger.info(`Успешная аутентификация пользователя ID: ${decoded.id}`);
         next();
