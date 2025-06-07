@@ -7,18 +7,17 @@ import quoteRoutes from "./routes/quoteRoutes.js";
 import directionRoutes from "./routes/directionRoutes.js";
 import groupRoutes from "./routes/groupRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
-import teacherRoutes from "./routes/teacherRoutes.js"; // Добавляем
-import departmentRoutes from "./routes/departmentRoutes.js"; // Добавляем
+import teacherRoutes from "./routes/teacherRoutes.js";
+import departmentRoutes from "./routes/departmentRoutes.js";
+import eventGroupRoutes from "./routes/eventGroupRoutes.js";
 import config from "./config/config.js";
 
 const { MONGODB_URI, PORT } = config;
 
 const app = express();
 
-// Middleware для обработки JSON
 app.use(express.json());
 
-// Настройка CORS с разрешением нужных заголовков
 app.use(cors({
   origin: true,
   credentials: true,
@@ -42,8 +41,9 @@ app.use("/api/quotes", quoteRoutes);
 app.use("/api/directions", directionRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/students", studentRoutes);
-app.use("/api/teachers", teacherRoutes); // Добавляем
-app.use("/api/departments", departmentRoutes); // Добавляем
+app.use("/api/teachers", teacherRoutes);
+app.use("/api/departments", departmentRoutes);
+app.use("/api/event-groups", eventGroupRoutes);
 
 // Запуск сервера
 app.listen(PORT, () => {

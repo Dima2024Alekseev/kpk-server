@@ -1,4 +1,5 @@
 import Department from "../models/Department.js";
+import Teacher from "../models/Teacher.js";
 
 // Создать новую ПЦК
 export const createDepartment = async (req, res) => {
@@ -39,9 +40,14 @@ export const getDepartments = async (req, res) => {
 };
 
 // Обновить ПЦК
+// Обновить ПЦК
 export const updateDepartment = async (req, res) => {
     const { id } = req.params;
     const { name, description } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ message: "Идентификатор ПЦК не предоставлен" });
+    }
 
     try {
         // Находим ПЦК
@@ -69,10 +75,11 @@ export const updateDepartment = async (req, res) => {
 
         res.status(200).json(updatedDepartment);
     } catch (error) {
-        console.error("Ошибка при обновлении ПЦК:", error);
+        console.error("Ошибка при обновлении ПЦК:", error.stack);
         res.status(500).json({ message: "Ошибка при обновлении ПЦК", error: error.message });
     }
 };
+
 
 // Удалить ПЦК
 export const deleteDepartment = async (req, res) => {
